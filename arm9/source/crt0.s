@@ -12,8 +12,7 @@ _start:
     adr r0, _arm7_bin
     ldr r1, =0x02FFFE34
     str r0, [r1]
-    add r1, r1, 4
-    str r0, [r1]
+    str r0, [r1, #4]
 
     // Instruct ARM7 to reboot
     // 0x02FFF200 == ARM9 IPC message to ARM7
