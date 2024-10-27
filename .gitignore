@@ -1,2 +1,4 @@
 *.nds
+*.dldi
+arm9/data
 build

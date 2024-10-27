@@ -8,7 +8,7 @@ BLOCKSDSEXT	?= /opt/blocksds/external
 # User config
 # ===========
 
-NAME		:= template_combined
+NAME		:= akmenu2_fat
 
 GAME_TITLE	:= Combined ARM7+ARM9 template
 GAME_SUBTITLE	:= Built with BlocksDS
@@ -92,8 +92,8 @@ endif
 $(ROM): arm9 arm7
 	@echo "  NDSTOOL $@"
 	$(V)$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
-		-7 build/arm7.elf -9 build/arm9.elf \
-		-b $(GAME_ICON) "$(GAME_FULL_TITLE)" \
+		-7 build/arm7.bin -9 build/arm9.bin \
+		-r9 0x02280000 -e9 0x02280000 -r7 0x023FA000 -e7 0x023FA000 \
 		$(NDSTOOL_ARGS)
 
 sdimage:

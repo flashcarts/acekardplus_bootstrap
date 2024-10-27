@@ -25,14 +25,15 @@ DEFINES		:=
 # Libraries
 # ---------
 
-LIBS		:= -lnds9
-LIBDIRS		:= $(BLOCKSDS)/libs/libnds
+LIBS		:=
+LIBDIRS		:=
 
 # Build artifacts
 # ---------------
 
 NAME		:= arm9
 BUILDDIR	:= build/$(NAME)
+BIN		:= build/$(NAME).bin
 ELF		:= build/$(NAME).elf
 DUMP		:= build/$(NAME).dump
 MAP		:= build/$(NAME).map
@@ -45,6 +46,7 @@ PREFIX		:= $(ARM_NONE_EABI_PATH)arm-none-eabi-
 CC		:= $(PREFIX)gcc
 CXX		:= $(PREFIX)g++
 LD		:= $(PREFIX)gcc
+OBJCOPY		:= $(PREFIX)objcopy
 OBJDUMP		:= $(PREFIX)objdump
 MKDIR		:= mkdir
 RM		:= rm -rf
@@ -85,8 +87,6 @@ SOURCES_CPP	:= $(shell find -L $(SOURCEDIRS) -name "*.cpp")
 
 ARCH		:= -mthumb -mcpu=arm946e-s+nofp
 
-SPECS		:= $(BLOCKSDS)/sys/crts/ds_arm9.specs
-
 WARNFLAGS	:= -Wall
 
 ifeq ($(SOURCES_CPP),)
@@ -101,20 +101,17 @@ INCLUDEFLAGS	:= $(foreach path,$(INCLUDEDIRS),-I$(path)) \
 LIBDIRSFLAGS	:= $(foreach path,$(LIBDIRS),-L$(path)/lib)
 
 ASFLAGS		+= -x assembler-with-cpp $(DEFINES) $(INCLUDEFLAGS) \
-		   $(ARCH) -ffunction-sections -fdata-sections \
-		   -specs=$(SPECS)
+		   $(ARCH) -ffunction-sections -fdata-sections
 
 CFLAGS		+= -std=gnu17 $(WARNFLAGS) $(DEFINES) $(INCLUDEFLAGS) \
-		   $(ARCH) -O2 -ffunction-sections -fdata-sections \
-		   -specs=$(SPECS)
+		   $(ARCH) -Oz -ffunction-sections -fdata-sections
 
 CXXFLAGS	+= -std=gnu++17 $(WARNFLAGS) $(DEFINES) $(INCLUDEFLAGS) \
-		   $(ARCH) -O2 -ffunction-sections -fdata-sections \
-		   -fno-exceptions -fno-rtti \
-		   -specs=$(SPECS)
+		   $(ARCH) -Oz -ffunction-sections -fdata-sections \
+		   -fno-exceptions -fno-rtti
 
 LDFLAGS		:= $(ARCH) $(LIBDIRSFLAGS) -Wl,-Map,$(MAP) $(DEFINES) \
-		   -Wl,--start-group $(LIBS) -Wl,--end-group -specs=$(SPECS)
+		   -Wl,--start-group $(LIBS) -Wl,--end-group -Tarm9.ld -nostartfiles -flto
 
 # Intermediate build files
 # ------------------------
@@ -143,7 +140,11 @@ DEPS		:= $(OBJS:.o=.d)
 
 .PHONY: all clean dump
 
-all: $(ELF)
+all: $(BIN)
+
+$(BIN): $(ELF)
+	@echo "  OBJCOPY.9    $@"
+	$(V)$(OBJCOPY) -O binary $< $@
 
 $(ELF): $(OBJS)
 	@echo "  LD.9    $@"
