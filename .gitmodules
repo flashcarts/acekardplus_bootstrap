@@ -1,0 +1,3 @@
+[submodule "nds-miniboot"]
+	path = nds-miniboot
+	url = https://github.com/asiekierka/nds-miniboot
