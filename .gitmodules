@@ -1,3 +1,7 @@
 [submodule "nds-miniboot"]
 	path = nds-miniboot
 	url = https://github.com/asiekierka/nds-miniboot
+[submodule "DLDI"]
+	path = DLDI
+	url = https://github.com/DS-Homebrew/DLDI
+	branch = builds

@@ -95,6 +95,7 @@ $(ROM): arm9 arm7
 		-7 build/arm7.bin -9 build/arm9.bin \
 		-r9 0x02280000 -e9 0x02280000 -r7 0x023FA000 -e7 0x023FA000 \
 		$(NDSTOOL_ARGS)
+	$(V)$(BLOCKSDS)/tools/dldipatch/dldipatch patch DLDI/acek.dldi $@
 
 sdimage:
 	@echo "  MKFATIMG $(SDIMAGE) $(SDROOT)"
